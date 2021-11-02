@@ -1,0 +1,22 @@
+gin:
+  addr: ":8080"
+  mode: "debug" #release,debug,test
+mysql:
+  dns: "root:111111@(192.168.1.168:3307)/warehouse?charset=utf8mb4&parseTime=True&loc=Local"
+  max-idle-conns: 10
+  max-open-conns: 100
+redis:
+  addr: "192.168.1.168:6379"
+  password: ""
+  db: 0
+logger:
+  path: "./runtime/log.txt"
+  level: "debug"
+  report-caller: true
+  mode: "release" #release,debug
+cache:
+  type: "file"
+  file-dir: "./runtime/cache"
+  redis-addr: "192.168.1.168:6379"
+  redis-pwd: ""
+  redis-db: 0
