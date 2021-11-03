@@ -40,7 +40,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.Response"
+                            "$ref": "#/definitions/request.Login"
                         }
                     }
                 ],
@@ -48,13 +48,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controller.Response"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/controller.Response"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -62,7 +62,18 @@ var doc = `{
         }
     },
     "definitions": {
-        "controller.Response": {
+        "request.Login": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Response": {
             "type": "object",
             "properties": {
                 "code": {

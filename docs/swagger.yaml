@@ -1,5 +1,12 @@
 definitions:
-  controller.Response:
+  request.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  response.Response:
     properties:
       code:
         type: integer
@@ -24,17 +31,17 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.Response'
+          $ref: '#/definitions/request.Login'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controller.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/controller.Response'
+            $ref: '#/definitions/response.Response'
       summary: 登录
 swagger: "2.0"

@@ -1,4 +1,4 @@
-package controller
+package response
 
 import (
 	"github.com/gin-gonic/gin"
@@ -29,7 +29,7 @@ func Fail(c *gin.Context, code int, message string) {
 	SendResponse(c, code, message, nil)
 }
 func ListResponse(c *gin.Context, list interface{}, page, total int) {
-	SendResponse(c, 200, "success", PageData{
+	SendResponse(c, 200, "success", &PageData{
 		page, total, list,
 	})
 }

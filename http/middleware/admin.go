@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"Gwen/http/controller"
+	"Gwen/model/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +11,7 @@ func AdminAuth() gin.HandlerFunc {
 		//简单测试
 		key := c.Query("key")
 		if key == "" {
-			controller.Fail(c, 101, "错误")
+			response.Fail(c, 101, "错误")
 			c.Abort()
 			return
 		}

@@ -15,6 +15,13 @@ type Model struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// Pagination
+type Pagination struct {
+	PageNum   int64 `form:"page_num" json:"page_num"`
+	PageSize  int64 `form:"page_size" json:"page_size"`
+	TotalSize int64 `form:"total_size" json:"total_size"`
+}
+
 func Init() (db *gorm.DB) {
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:               global.Config.Mysql.Dns, // DSN data source name

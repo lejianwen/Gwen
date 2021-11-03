@@ -7,3 +7,10 @@ type Admin struct {
 	Nickname string     `json:"nickname"`
 	Role     *AdminRole `json:"role,omitempty"`
 }
+type AdminList struct {
+	Admins []*Admin `json:"list,omitempty"`
+}
+type AdminListRes struct {
+	AdminList
+	Pagination
+}
