@@ -9,7 +9,7 @@ type Login struct {
 	controller *admin.Login
 }
 
-func (g *Login) Init(rg *gin.RouterGroup) {
-	rg.POST("/login", g.controller.Login)
-	rg.POST("/logout", g.controller.Logout)
+func (g *Login) Init(adg *gin.RouterGroup) {
+	adg.POST("/login", g.controller.Login)
+	adg.POST("/logout", g.controller.Logout)
 }

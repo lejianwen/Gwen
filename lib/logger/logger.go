@@ -19,7 +19,7 @@ type Config struct {
 	Mode         string
 }
 
-func New(c Config) *log.Logger {
+func New(c *Config) *log.Logger {
 	log.SetFormatter(&nested.Formatter{
 		// HideKeys:        true,
 		TimestampFormat: "2006-01-02 15:04:05",

@@ -13,19 +13,23 @@ import (
 )
 
 func Init() {
+	//配置解析
 	global.Viper = config.Init(&global.Config, func() {
 		fmt.Println(global.Config)
 	})
 
-	global.LOGGER = logger.New(logger.Config{
+	//日志
+	global.LOGGER = logger.New(&logger.Config{
 		Path:         global.Config.Logger.Path,
 		Level:        global.Config.Logger.Level,
 		ReportCaller: global.Config.Logger.ReportCaller,
 		Mode:         global.Config.Logger.Mode,
 	})
 
+	//redis
 	global.Redis = redis.New(global.Config.Redis.Addr, global.Config.Redis.Password, global.Config.Redis.Db)
 
+	//cache
 	if global.Config.Cache.Type == "file" {
 		fc := cache.NewFile()
 		fc.SetDir(global.Config.Cache.FileDir)
@@ -38,6 +42,9 @@ func Init() {
 		})
 	}
 
+	//gorm
 	global.DB = model.Init()
+
+	//gin
 	http.Init()
 }
