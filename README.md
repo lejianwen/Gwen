@@ -6,8 +6,6 @@
 
 ~~~
 app
-├── bootstrap                       启动项
-│     └── bootstrap.go
 ├── conf                            配置文件
 │     └── config.yaml
 ├── config                          配置相关结构体

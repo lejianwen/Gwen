@@ -11,7 +11,12 @@ type Handler interface {
 }
 
 // MaxTimeOut 最大超时时间
-var MaxTimeOut = 365 * 24 * 3600
+
+const (
+	TypeRedis  = "redis"
+	TypeFile   = "file"
+	MaxTimeOut = 365 * 24 * 3600
+)
 
 func New(typ string) Handler {
 	var cache Handler
