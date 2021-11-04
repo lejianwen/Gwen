@@ -11,7 +11,7 @@ import (
 
 var (
 	DB     *gorm.DB
-	LOGGER *logrus.Logger
+	Logger *logrus.Logger
 	Config config.Config
 	Viper  *viper.Viper
 	Redis  *redis.Client

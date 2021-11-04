@@ -9,7 +9,7 @@ import (
 // Logger 日志中间件
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		global.LOGGER.WithFields(
+		global.Logger.WithFields(
 			logrus.Fields{
 				"uri":    c.Request.URL,
 				"ip":     c.ClientIP(),

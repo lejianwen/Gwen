@@ -22,7 +22,7 @@ func main() {
 	})
 
 	//日志
-	global.LOGGER = logger.New(&logger.Config{
+	global.Logger = logger.New(&logger.Config{
 		Path:         global.Config.Logger.Path,
 		Level:        global.Config.Logger.Level,
 		ReportCaller: global.Config.Logger.ReportCaller,

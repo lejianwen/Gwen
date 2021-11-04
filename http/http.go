@@ -12,8 +12,8 @@ func Init() {
 	g := gin.New()
 
 	//修改gin Recovery日志 输出为logger的输出点
-	if global.LOGGER != nil {
-		//gin.DefaultErrorWriter = global.LOGGER.WriterLevel(logrus.ErrorLevel)
+	if global.Logger != nil {
+		//gin.DefaultErrorWriter = global.Logger.WriterLevel(logrus.ErrorLevel)
 	}
 
 	g.Use(gin.Logger())
