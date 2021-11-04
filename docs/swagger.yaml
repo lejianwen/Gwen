@@ -20,6 +20,32 @@ info:
   title: swagger使用例子
   version: "1.0"
 paths:
+  /admin/admin/list:
+    get:
+      consumes:
+      - application/json
+      description: 管理员列表
+      parameters:
+      - description: 页码
+        in: query
+        name: page_num
+        type: integer
+      - description: 页大小
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员列表
   /admin/login:
     post:
       consumes:

@@ -1,4 +1,4 @@
-package admin
+package controller
 
 import (
 	"Gwen/global"
@@ -25,6 +25,16 @@ func (ct *Admin) Create(c *gin.Context) {
 	response.Success(c, admin)
 }
 
+// @Summary 管理员列表
+// @Description 管理员列表
+// @Accept  json
+// @Produce  json
+// @Param page_num query int false "页码"
+// @Param page_size query int false "页大小"
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/admin/list [get]
+//List 登录
 func (ct *Admin) List(c *gin.Context) {
 	res := service.AllService.AdminService.List()
 	//for _, admin := range res.Admins {
