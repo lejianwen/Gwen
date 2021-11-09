@@ -8,7 +8,7 @@ import (
 
 func AdminInit(g *gin.Engine) {
 
-	adg := g.Group("/admin")
+	adg := g.Group("/admin-api")
 
 	(&admin.Login{}).Init(adg)
 

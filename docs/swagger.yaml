@@ -1,10 +1,73 @@
+basePath: /admin-api
 definitions:
+  model.Admin:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      nickname:
+        type: string
+      role:
+        $ref: '#/definitions/model.AdminRole'
+      role_id:
+        type: integer
+      status:
+        type: integer
+      token:
+        type: string
+      token_expire_time:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.AdminRole:
+    properties:
+      admins:
+        items:
+          $ref: '#/definitions/model.Admin'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      see_cb:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  request.AdminForm:
+    properties:
+      nickname:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+      status:
+        type: integer
+      username:
+        type: string
+    required:
+    - nickname
+    - password
+    - role_id
+    - status
+    - username
+    type: object
   request.Login:
     properties:
       password:
         type: string
       username:
         type: string
+    required:
+    - password
+    - username
     type: object
   response.Response:
     properties:
@@ -20,7 +83,62 @@ info:
   title: swagger使用例子
   version: "1.0"
 paths:
-  /admin/admin/list:
+  /admin/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建管理员
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.AdminForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 创建管理员
+      tags:
+      - 管理员
+  /admin/detail/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 管理员详情
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 管理员详情
+      tags:
+      - 管理员
+  /admin/list:
     get:
       consumes:
       - application/json
@@ -45,8 +163,12 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - token: []
       summary: 管理员列表
-  /admin/login:
+      tags:
+      - 管理员
+  /login:
     post:
       consumes:
       - application/json
@@ -64,10 +186,43 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Admin'
+              type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
       summary: 登录
+      tags:
+      - 登录
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: 登出
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 登出
+      tags:
+      - 登录
+securityDefinitions:
+  token:
+    in: header
+    name: api-token
+    type: apiKey
 swagger: "2.0"

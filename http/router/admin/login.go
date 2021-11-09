@@ -1,15 +1,16 @@
 package admin
 
 import (
-	controller2 "Gwen/http/controller"
+	"Gwen/http/controller"
+	"Gwen/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type Login struct {
-	controller *controller2.Login
+	controller *controller.Login
 }
 
 func (g *Login) Init(adg *gin.RouterGroup) {
 	adg.POST("/login", g.controller.Login)
-	adg.POST("/logout", g.controller.Logout)
+	adg.Use(middleware.AdminAuth()).POST("/logout", g.controller.Logout)
 }

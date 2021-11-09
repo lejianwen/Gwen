@@ -1,11 +1,17 @@
 package model
 
+import "time"
+
 type Admin struct {
 	Model
-	RoleId   int        `json:"role_id"`
-	Username string     `json:"username"`
-	Nickname string     `json:"nickname"`
-	Role     *AdminRole `json:"role,omitempty"`
+	RoleId          uint       `json:"role_id"`
+	Username        string     `json:"username"`
+	Password        string     `json:"-"`
+	Nickname        string     `json:"nickname"`
+	Token           string     `json:"token,omitempty"`
+	TokenExpireTime time.Time  `json:"token_expire_time,omitempty"`
+	Status          StatusCode `json:"status"`
+	Role            *AdminRole `json:"role,omitempty"`
 }
 type AdminList struct {
 	Admins []*Admin `json:"list,omitempty"`

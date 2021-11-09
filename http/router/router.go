@@ -16,5 +16,4 @@ func Init(g *gin.Engine) {
 	g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	AdminInit(g)
 
-	ApiInit(g)
 }

@@ -6,15 +6,25 @@ import (
 	"Gwen/http"
 	"Gwen/lib/cache"
 	"Gwen/lib/logger"
+	"Gwen/lib/orm"
 	"Gwen/lib/redis"
-	"Gwen/model"
 	"fmt"
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/zh_Hans_CN"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 	redis2 "github.com/go-redis/redis/v8"
+	"reflect"
 )
 
 // @title swagger使用例子
 // @version 1.0
 // @description swagger 入门使用例子
+// @basePath /admin-api
+// @securityDefinitions.apikey token
+// @in header
+// @name api-token
 func main() {
 	//配置解析
 	global.Viper = config.Init(&global.Config, func() {
@@ -46,7 +56,42 @@ func main() {
 	}
 
 	//gorm
-	global.DB = model.Init()
+	conf := &orm.MysqlConfig{
+		Dns: global.Config.Mysql.Dns, MaxIdleConns: global.Config.Mysql.MaxIdleConns, MaxOpenConns: global.Config.Mysql.MaxOpenConns,
+	}
+	global.DB = orm.NewMysql(conf)
+
+	//validator
+	validate := validator.New()
+	en := en.New()
+	cn := zh_Hans_CN.New()
+	uni := ut.New(en, cn)
+	trans, _ := uni.GetTranslator("cn")
+	zh_translations.RegisterDefaultTranslations(validate, trans)
+	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+		label := field.Tag.Get("label")
+		if label == "" {
+			return field.Name
+		}
+		return label
+	})
+	global.Validator.Validate = validate
+	global.Validator.VTrans = trans
+
+	global.Validator.ValidStruct = func(i interface{}) []string {
+		err := global.Validator.Validate.Struct(i)
+		errList := make([]string, 0, 10)
+		if err != nil {
+			if _, ok := err.(*validator.InvalidValidationError); ok {
+				errList = append(errList, err.Error())
+				return errList
+			}
+			for _, err2 := range err.(validator.ValidationErrors) {
+				errList = append(errList, err2.Translate(global.Validator.VTrans))
+			}
+		}
+		return errList
+	}
 
 	//gin
 	http.Init()
