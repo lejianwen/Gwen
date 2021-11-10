@@ -22,5 +22,6 @@ var (
 		Validate    *validator.Validate
 		VTrans      ut.Translator
 		ValidStruct func(interface{}) []string
+		ValidVar    func(field interface{}, tag string) []string
 	}
 )

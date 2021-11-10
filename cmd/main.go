@@ -18,9 +18,9 @@ import (
 	"reflect"
 )
 
-// @title swagger使用例子
+// @title 供应商后台管理系统API
 // @version 1.0
-// @description swagger 入门使用例子
+// @description 后台接口
 // @basePath /admin-api
 // @securityDefinitions.apikey token
 // @in header
@@ -80,6 +80,21 @@ func main() {
 
 	global.Validator.ValidStruct = func(i interface{}) []string {
 		err := global.Validator.Validate.Struct(i)
+		errList := make([]string, 0, 10)
+		if err != nil {
+			if _, ok := err.(*validator.InvalidValidationError); ok {
+				errList = append(errList, err.Error())
+				return errList
+			}
+			for _, err2 := range err.(validator.ValidationErrors) {
+				errList = append(errList, err2.Translate(global.Validator.VTrans))
+			}
+		}
+		return errList
+	}
+	global.Validator.ValidVar = func(field interface{}, tag string) []string {
+		err := global.Validator.Validate.Var(field, tag)
+		fmt.Println(err)
 		errList := make([]string, 0, 10)
 		if err != nil {
 			if _, ok := err.(*validator.InvalidValidationError); ok {

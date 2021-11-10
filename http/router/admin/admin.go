@@ -15,6 +15,8 @@ func (g *Admin) Init(rg *gin.RouterGroup) {
 		aR.GET("/list", g.controller.List)
 		aR.GET("/detail/:id", g.controller.Detail)
 		aR.POST("/create", g.controller.Create)
+		aR.POST("/update", g.controller.Update)
+		aR.POST("/delete", g.controller.Delete)
 		aR.GET("/error", g.controller.Error)
 	}
 }

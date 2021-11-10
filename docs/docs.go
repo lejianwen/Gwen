@@ -68,6 +68,51 @@ var doc = `{
                 }
             }
         },
+        "/admin/delete": {
+            "post": {
+                "security": [
+                    {
+                        "token": []
+                    }
+                ],
+                "description": "管理员编删除",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "管理员删除",
+                "parameters": [
+                    {
+                        "description": "管理员信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AdminForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/detail/{id}": {
             "get": {
                 "security": [
@@ -133,7 +178,7 @@ var doc = `{
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "page_num",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -141,6 +186,57 @@ var doc = `{
                         "description": "页大小",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/update": {
+            "post": {
+                "security": [
+                    {
+                        "token": []
+                    }
+                ],
+                "description": "管理员编辑",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "管理员编辑",
+                "parameters": [
+                    {
+                        "description": "管理员信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AdminForm"
+                        }
                     }
                 ],
                 "responses": {
@@ -318,6 +414,9 @@ var doc = `{
                 "username"
             ],
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "nickname": {
                     "type": "string"
                 },
@@ -387,8 +486,8 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "",
 	BasePath:    "/admin-api",
 	Schemes:     []string{},
-	Title:       "swagger使用例子",
-	Description: "swagger 入门使用例子",
+	Title:       "供应商后台管理系统API",
+	Description: "后台接口",
 }
 
 type s struct{}

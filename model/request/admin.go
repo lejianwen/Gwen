@@ -5,9 +5,16 @@ import (
 )
 
 type AdminForm struct {
-	RoleId   uint             `json:"role_id" binding:"required"`
-	Username string           `json:"username" binding:"required"`
-	Password string           `json:"password" binding:"required"`
-	Nickname string           `json:"nickname" binding:"required"`
-	Status   model.StatusCode `json:"status" binding:"required"`
+	Id       uint             `json:"id"`
+	RoleId   uint             `json:"role_id" validate:"required,gt=0" label:"角色id"`
+	Username string           `json:"username" validate:"required"`
+	Password string           `json:"password" validate:"required"`
+	Nickname string           `json:"nickname" validate:"required"`
+	Status   model.StatusCode `json:"status" validate:"required,gte=0"`
+}
+
+type AdminListQuery struct {
+	Page     uint   `form:"page"`
+	PageSize uint   `form:"page_size"`
+	Nickname string `form:"nickname"`
 }

@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "swagger 入门使用例子",
-        "title": "swagger使用例子",
+        "description": "后台接口",
+        "title": "供应商后台管理系统API",
         "contact": {},
         "version": "1.0"
     },
@@ -26,6 +26,51 @@
                     "管理员"
                 ],
                 "summary": "创建管理员",
+                "parameters": [
+                    {
+                        "description": "管理员信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AdminForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/delete": {
+            "post": {
+                "security": [
+                    {
+                        "token": []
+                    }
+                ],
+                "description": "管理员编删除",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "管理员删除",
                 "parameters": [
                     {
                         "description": "管理员信息",
@@ -118,7 +163,7 @@
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "page_num",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -126,6 +171,57 @@
                         "description": "页大小",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/update": {
+            "post": {
+                "security": [
+                    {
+                        "token": []
+                    }
+                ],
+                "description": "管理员编辑",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "管理员编辑",
+                "parameters": [
+                    {
+                        "description": "管理员信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AdminForm"
+                        }
                     }
                 ],
                 "responses": {
@@ -303,6 +399,9 @@
                 "username"
             ],
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "nickname": {
                     "type": "string"
                 },

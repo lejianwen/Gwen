@@ -42,6 +42,8 @@ definitions:
     type: object
   request.AdminForm:
     properties:
+      id:
+        type: integer
       nickname:
         type: string
       password:
@@ -79,8 +81,8 @@ definitions:
     type: object
 info:
   contact: {}
-  description: swagger 入门使用例子
-  title: swagger使用例子
+  description: 后台接口
+  title: 供应商后台管理系统API
   version: "1.0"
 paths:
   /admin/create:
@@ -109,6 +111,34 @@ paths:
       security:
       - token: []
       summary: 创建管理员
+      tags:
+      - 管理员
+  /admin/delete:
+    post:
+      consumes:
+      - application/json
+      description: 管理员编删除
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.AdminForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 管理员删除
       tags:
       - 管理员
   /admin/detail/{id}:
@@ -146,11 +176,15 @@ paths:
       parameters:
       - description: 页码
         in: query
-        name: page_num
+        name: page
         type: integer
       - description: 页大小
         in: query
         name: page_size
+        type: integer
+      - description: 昵称
+        in: query
+        name: nickname
         type: integer
       produces:
       - application/json
@@ -166,6 +200,34 @@ paths:
       security:
       - token: []
       summary: 管理员列表
+      tags:
+      - 管理员
+  /admin/update:
+    post:
+      consumes:
+      - application/json
+      description: 管理员编辑
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/request.AdminForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 管理员编辑
       tags:
       - 管理员
   /login:

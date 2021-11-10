@@ -6,6 +6,7 @@ import (
 	"Gwen/utils"
 	"crypto/md5"
 	"fmt"
+	"gorm.io/gorm"
 	"math/rand"
 	"strconv"
 	"time"
@@ -14,16 +15,20 @@ import (
 type AdminService struct {
 }
 
-func (s *AdminService) Info(id int) *model.Admin {
+func (s *AdminService) Info(id uint) *model.Admin {
 	a := &model.Admin{}
 	global.DB.Scopes(CommonEnable()).Where("id = ?", id).First(a)
 	return a
 }
 
-func (s *AdminService) List() (res *model.AdminListRes) {
+func (s *AdminService) List(page, pageSize uint, where func(tx *gorm.DB)) (res *model.AdminListRes) {
 	res = &model.AdminListRes{}
-	global.DB.Scopes(Paginate(1, 10)).Preload("Role").Find(&res.Admins)
-	global.DB.Model(&model.Admin{}).Count(&res.TotalSize)
+	tx := global.DB.Model(&model.Admin{})
+	tx.Scopes(Paginate(page, pageSize))
+	if where != nil {
+		where(tx)
+	}
+	tx.Find(&res.Admins).Count(&res.TotalSize)
 	return
 }
 
@@ -56,4 +61,9 @@ func (s *AdminService) CheckToken(t string) (*model.Admin, bool) {
 		}
 	}
 	return a, false
+}
+
+func (s *AdminService) Update(a *model.Admin, v map[string]interface{}) error {
+	err := global.DB.Model(a).Updates(v).Error
+	return err
 }
