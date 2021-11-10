@@ -3,6 +3,7 @@ package service
 import (
 	"Gwen/global"
 	"Gwen/model"
+	"Gwen/model/request"
 	"Gwen/utils"
 	"crypto/md5"
 	"fmt"
@@ -63,7 +64,29 @@ func (s *AdminService) CheckToken(t string) (*model.Admin, bool) {
 	return a, false
 }
 
-func (s *AdminService) Update(a *model.Admin, v map[string]interface{}) error {
+func (s *AdminService) Update(a *model.Admin, f *request.AdminForm) error {
+	v := map[string]interface{}{
+		"role_id":  f.RoleId,
+		"username": f.Username,
+		"nickname": f.Nickname,
+		"status":   f.Status,
+	}
 	err := global.DB.Model(a).Updates(v).Error
 	return err
+}
+
+func (s *AdminService) Create(f *request.AdminForm) (*model.Admin, error) {
+	admin := &model.Admin{
+		RoleId:   f.RoleId,
+		Username: f.Username,
+		Password: utils.Md5(f.Password),
+		Nickname: f.Nickname,
+		Status:   f.Status,
+	}
+	err := global.DB.Create(admin).Error
+	return admin, err
+}
+
+func (s *AdminService) Delete(a *model.Admin) error {
+	return global.DB.Delete(a).Error
 }

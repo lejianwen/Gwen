@@ -1,7 +1,6 @@
 package model
 
 import (
-	_ "gorm.io/driver/mysql"
 	"time"
 )
 
@@ -20,7 +19,7 @@ type Model struct {
 
 // Pagination
 type Pagination struct {
-	PageNum   int64 `form:"page_num" json:"page_num"`
+	Page      int64 `form:"page" json:"page"`
 	TotalSize int64 `form:"total_size" json:"total_size"`
 	PageSize  int64 `form:"page_size" json:"page_size"`
 }

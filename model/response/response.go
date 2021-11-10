@@ -23,13 +23,9 @@ func SendResponse(c *gin.Context, code int, message string, data interface{}) {
 }
 
 func Success(c *gin.Context, data interface{}) {
-	SendResponse(c, 200, "success", data)
+	SendResponse(c, 0, "success", data)
 }
+
 func Fail(c *gin.Context, code int, message string) {
 	SendResponse(c, code, message, nil)
-}
-func ListResponse(c *gin.Context, list interface{}, page, total int) {
-	SendResponse(c, 200, "success", &PageData{
-		page, total, list,
-	})
 }

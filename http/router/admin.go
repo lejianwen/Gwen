@@ -14,5 +14,6 @@ func AdminInit(g *gin.Engine) {
 
 	adg.Use(middleware.AdminAuth())
 	(&admin.Admin{}).Init(adg)
+	(&admin.AdminRole{}).Init(adg)
 
 }

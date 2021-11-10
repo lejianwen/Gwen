@@ -1,0 +1,50 @@
+package service
+
+import (
+	"Gwen/global"
+	"Gwen/model"
+	"Gwen/model/request"
+	"gorm.io/gorm"
+)
+
+type AdminRoleService struct {
+}
+
+func (s *AdminRoleService) Info(id uint) *model.AdminRole {
+	a := &model.AdminRole{}
+	global.DB.Where("id = ?", id).First(a)
+	return a
+}
+
+func (s *AdminRoleService) List(page, pageSize uint, where func(tx *gorm.DB)) (res *model.AdminRoleListRes) {
+	res = &model.AdminRoleListRes{}
+	tx := global.DB.Model(&model.AdminRole{})
+	tx.Scopes(Paginate(page, pageSize))
+	if where != nil {
+		where(tx)
+	}
+	tx.Find(&res.AdminRoles).Count(&res.TotalSize)
+	return
+}
+
+func (s *AdminRoleService) Update(a *model.AdminRole, f *request.AdminRoleForm) error {
+	v := map[string]interface{}{
+		"name": f.Name,
+	}
+	err := global.DB.Model(a).Updates(v).Error
+	return err
+}
+
+func (s *AdminRoleService) Create(form *request.AdminRoleForm) (*model.AdminRole, error) {
+	item := &model.AdminRole{
+		Id:    0,
+		SeeCb: 0,
+		Name:  form.Name,
+	}
+	res := global.DB.Create(item).Error
+	return item, res
+}
+
+func (s *AdminRoleService) Delete(ar *model.AdminRole) error {
+	return global.DB.Delete(ar).Error
+}

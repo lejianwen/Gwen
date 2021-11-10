@@ -4,6 +4,7 @@ import "time"
 
 type Admin struct {
 	Model
+	Id              uint       `json:"id"`
 	RoleId          uint       `json:"role_id"`
 	Username        string     `json:"username"`
 	Password        string     `json:"-"`

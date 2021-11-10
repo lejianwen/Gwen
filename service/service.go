@@ -7,6 +7,7 @@ import (
 
 type Service struct {
 	AdminService
+	AdminRoleService
 }
 
 func New() *Service {

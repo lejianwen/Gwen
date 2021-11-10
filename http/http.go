@@ -5,18 +5,19 @@ import (
 	"Gwen/http/middleware"
 	"Gwen/http/router"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func Init() {
 	gin.SetMode(global.Config.Gin.Mode)
 	g := gin.New()
 
-	//修改gin Recovery日志 输出为logger的输出点
-	if global.Logger != nil {
-		//gin.DefaultErrorWriter = global.Logger.WriterLevel(logrus.ErrorLevel)
+	if global.Config.Gin.Mode == gin.ReleaseMode {
+		//修改gin Recovery日志 输出为logger的输出点
+		if global.Logger != nil {
+			gin.DefaultErrorWriter = global.Logger.WriterLevel(logrus.ErrorLevel)
+		}
 	}
-
-	g.Use(gin.Logger())
 
 	g.Use(middleware.Logger(), gin.Recovery())
 
