@@ -27,7 +27,7 @@ type AdminRole struct {
 func (ct *AdminRole) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
-	item := service.AllService.AdminRoleService.Info(uint(iid))
+	item := service.AllService.AdminRoleService.InfoById(uint(iid))
 	if item.Id > 0 {
 		response.Success(c, item)
 		return
@@ -55,7 +55,11 @@ func (ct *AdminRole) Create(c *gin.Context) {
 		response.Fail(c, 101, "系统错误")
 		return
 	}
-	item, err := service.AllService.AdminRoleService.Create(f)
+	item := &model.AdminRole{
+		SeeCb: 0,
+		Name:  f.Name,
+	}
+	err := service.AllService.AdminRoleService.Create(item)
 	if err != nil {
 		response.Fail(c, 101, "创建失败")
 		return
@@ -109,9 +113,12 @@ func (ct *AdminRole) Update(c *gin.Context) {
 		response.Fail(c, 101, errList[0])
 		return
 	}
-	item := service.AllService.AdminRoleService.Info(f.Id)
+	item := service.AllService.AdminRoleService.InfoById(f.Id)
 	if item.Id > 0 {
-		err := service.AllService.AdminRoleService.Update(item, f)
+		v := map[string]interface{}{
+			"name": f.Name,
+		}
+		err := service.AllService.AdminRoleService.Update(item, v)
 		if err == nil {
 			response.Success(c, nil)
 			return
@@ -146,7 +153,7 @@ func (ct *AdminRole) Delete(c *gin.Context) {
 		response.Fail(c, 101, "参数错误")
 		return
 	}
-	item := service.AllService.AdminRoleService.Info(f.Id)
+	item := service.AllService.AdminRoleService.InfoById(f.Id)
 	if item.Id > 0 {
 		err := service.AllService.AdminRoleService.Delete(item)
 		if err == nil {

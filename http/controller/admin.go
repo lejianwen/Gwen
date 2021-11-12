@@ -2,9 +2,11 @@ package controller
 
 import (
 	"Gwen/global"
+	"Gwen/model"
 	"Gwen/model/request"
 	"Gwen/model/response"
 	"Gwen/service"
+	"Gwen/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"strconv"
@@ -56,7 +58,14 @@ func (ct *Admin) Create(c *gin.Context) {
 		response.Fail(c, 101, "系统错误")
 		return
 	}
-	admin, err := service.AllService.AdminService.Create(f)
+	admin := &model.Admin{
+		RoleId:   f.RoleId,
+		Username: f.Username,
+		Password: utils.Md5(f.Password),
+		Nickname: f.Nickname,
+		Status:   f.Status,
+	}
+	err := service.AllService.AdminService.Create(admin)
 	if err != nil {
 		response.Fail(c, 101, "创建失败")
 		return
@@ -117,7 +126,13 @@ func (ct *Admin) Update(c *gin.Context) {
 	}
 	admin := service.AllService.AdminService.Info(f.Id)
 	if admin.Id > 0 {
-		err := service.AllService.AdminService.Update(admin, f)
+		v := map[string]interface{}{
+			"role_id":  f.RoleId,
+			"username": f.Username,
+			"nickname": f.Nickname,
+			"status":   f.Status,
+		}
+		err := service.AllService.AdminService.Update(admin, v)
 		if err == nil {
 			response.Success(c, nil)
 			return

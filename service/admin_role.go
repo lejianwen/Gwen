@@ -3,14 +3,13 @@ package service
 import (
 	"Gwen/global"
 	"Gwen/model"
-	"Gwen/model/request"
 	"gorm.io/gorm"
 )
 
 type AdminRoleService struct {
 }
 
-func (s *AdminRoleService) Info(id uint) *model.AdminRole {
+func (s *AdminRoleService) InfoById(id uint) *model.AdminRole {
 	a := &model.AdminRole{}
 	global.DB.Where("id = ?", id).First(a)
 	return a
@@ -27,22 +26,14 @@ func (s *AdminRoleService) List(page, pageSize uint, where func(tx *gorm.DB)) (r
 	return
 }
 
-func (s *AdminRoleService) Update(a *model.AdminRole, f *request.AdminRoleForm) error {
-	v := map[string]interface{}{
-		"name": f.Name,
-	}
-	err := global.DB.Model(a).Updates(v).Error
+func (s *AdminRoleService) Update(ar *model.AdminRole, v map[string]interface{}) error {
+	err := global.DB.Model(ar).Updates(v).Error
 	return err
 }
 
-func (s *AdminRoleService) Create(form *request.AdminRoleForm) (*model.AdminRole, error) {
-	item := &model.AdminRole{
-		Id:    0,
-		SeeCb: 0,
-		Name:  form.Name,
-	}
-	res := global.DB.Create(item).Error
-	return item, res
+func (s *AdminRoleService) Create(ar *model.AdminRole) error {
+	res := global.DB.Create(ar).Error
+	return res
 }
 
 func (s *AdminRoleService) Delete(ar *model.AdminRole) error {
