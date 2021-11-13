@@ -68,7 +68,7 @@ func main() {
 
 	//oss
 	global.Oss = &upload.Oss{}
-	utils.CopyStruct(&global.Config.Oss, global.Oss)
+	utils.CopyStructByJson(&global.Config.Oss, global.Oss)
 
 	//gin
 	http.Init()
