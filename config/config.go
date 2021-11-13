@@ -19,6 +19,7 @@ type Config struct {
 	Logger Logger
 	Redis  Redis
 	Cache  Cache
+	Oss    Oss
 }
 
 // Init 初始化配置

@@ -1,12 +1,12 @@
 gin:
-  addr: ":8080"
+  addr: ":8081"
   mode: "debug" #release,debug,test
 mysql:
-  dns: "root:111111@(192.168.1.168:3307)/warehouse?charset=utf8mb4&parseTime=True&loc=Local"
+  dns: "root:111111@(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
   max-idle-conns: 10
   max-open-conns: 100
 redis:
-  addr: "192.168.1.168:6379"
+  addr: "127.0.0.1:6379"
   password: ""
   db: 0
 logger:
@@ -17,6 +17,13 @@ logger:
 cache:
   type: "file"
   file-dir: "./runtime/cache"
-  redis-addr: "192.168.1.168:6379"
+  redis-addr: "127.0.0.1:6379"
   redis-pwd: ""
   redis-db: 0
+oss:
+  access-key-id: ""
+  access-key-secret: ""
+  host: ""
+  callback-url: ""
+  expire-time: 30
+  max-byte: 10240

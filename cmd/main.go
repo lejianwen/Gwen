@@ -8,6 +8,8 @@ import (
 	"Gwen/lib/logger"
 	"Gwen/lib/orm"
 	"Gwen/lib/redis"
+	"Gwen/lib/upload"
+	"Gwen/utils"
 	"fmt"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh_Hans_CN"
@@ -62,6 +64,17 @@ func main() {
 	global.DB = orm.NewMysql(conf)
 
 	//validator
+	InitValidator()
+
+	//oss
+	global.Oss = &upload.Oss{}
+	utils.CopyStruct(&global.Config.Oss, global.Oss)
+
+	//gin
+	http.Init()
+}
+
+func InitValidator() {
 	validate := validator.New()
 	en := en.New()
 	cn := zh_Hans_CN.New()
@@ -108,6 +121,4 @@ func main() {
 		return errList
 	}
 
-	//gin
-	http.Init()
 }
