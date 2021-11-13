@@ -66,6 +66,18 @@ type CallbackParam struct {
 	CallbackBodyType string `json:"callbackBodyType"`
 }
 
+type CallbackBaseForm struct {
+	Bucket         string `json:"bucket" form:"bucket"`
+	Etag           string `json:"etag" form:"etag"`
+	Filename       string `json:"filename" form:"filename"`
+	Size           string `json:"size" form:"size"`
+	MimeType       string `json:"mime_type" form:"mime_type"`
+	Height         string `json:"height" form:"height"`
+	Width          string `json:"width" form:"width"`
+	Format         string `json:"format" form:"format"`
+	OriginFilename string `json:"origin_filename" form:"origin_filename"`
+}
+
 func (oc *Oss) GetPolicyToken(uploadDir string) string {
 	now := time.Now().Unix()
 	expire_end := now + oc.ExpireTime
@@ -75,8 +87,8 @@ func (oc *Oss) GetPolicyToken(uploadDir string) string {
 	var config ConfigStruct
 	config.Expiration = tokenExpire
 	var condition = []interface{}{"starts-with", "$key", uploadDir}
-	var condition2 = []interface{}{"content-length-range", 0, oc.MaxByte}
-	config.Conditions = append(config.Conditions, condition, condition2)
+	var condition_limit = []interface{}{"content-length-range", 0, oc.MaxByte}
+	config.Conditions = append(config.Conditions, condition, condition_limit)
 
 	//calucate signature
 	result, err := json.Marshal(config)
@@ -89,12 +101,17 @@ func (oc *Oss) GetPolicyToken(uploadDir string) string {
 
 	var callbackParam CallbackParam
 	callbackParam.CallbackUrl = oc.CallbackUrl
-	callbackParam.CallbackBody = "filename=${object}&" +
-		"size=${size}&" +
-		"mimeType=${mimeType}&" +
-		"height=${imageInfo.height}&" +
-		"width=${imageInfo.width}&" +
-		"origin_filename=${x:origin_filename}"
+
+	callbackParam.CallbackBody =
+		"bucket=${bucket}&" +
+			"etag=${etag}&" +
+			"filename=${object}&" +
+			"size=${size}&" +
+			"mime_type=${mimeType}&" +
+			"height=${imageInfo.height}&" +
+			"width=${imageInfo.width}&" +
+			"format=${imageInfo.format}&" +
+			"origin_filename=${x:origin_filename}"
 	callbackParam.CallbackBodyType = "application/x-www-form-urlencoded"
 	callback_str, err := json.Marshal(callbackParam)
 	if err != nil {
