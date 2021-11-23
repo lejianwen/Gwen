@@ -18,11 +18,12 @@ func (s *AdminRoleService) InfoById(id uint) *model.AdminRole {
 func (s *AdminRoleService) List(page, pageSize uint, where func(tx *gorm.DB)) (res *model.AdminRoleListRes) {
 	res = &model.AdminRoleListRes{}
 	tx := global.DB.Model(&model.AdminRole{})
-	tx.Scopes(Paginate(page, pageSize))
 	if where != nil {
 		where(tx)
 	}
-	tx.Find(&res.AdminRoles).Count(&res.TotalSize)
+	tx.Count(&res.Total)
+	tx.Scopes(Paginate(page, pageSize))
+	tx.Find(&res.AdminRoles).Count(&res.Total)
 	return
 }
 

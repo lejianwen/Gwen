@@ -24,11 +24,12 @@ func (s *AdminService) Info(id uint) *model.Admin {
 func (s *AdminService) List(page, pageSize uint, where func(tx *gorm.DB)) (res *model.AdminListRes) {
 	res = &model.AdminListRes{}
 	tx := global.DB.Model(&model.Admin{})
-	tx.Scopes(Paginate(page, pageSize))
 	if where != nil {
 		where(tx)
 	}
-	tx.Find(&res.Admins).Count(&res.TotalSize)
+	tx.Count(&res.Total)
+	tx.Scopes(Paginate(page, pageSize))
+	tx.Find(&res.Admins)
 	return
 }
 

@@ -20,9 +20,9 @@ type Model struct {
 
 // Pagination
 type Pagination struct {
-	Page      int64 `form:"page" json:"page"`
-	TotalSize int64 `form:"total_size" json:"total_size"`
-	PageSize  int64 `form:"page_size" json:"page_size"`
+	Page     int64 `form:"page" json:"page"`
+	Total    int64 `form:"total" json:"total"`
+	PageSize int64 `form:"page_size" json:"page_size"`
 }
 
 // AutoTime 自定义时间格式
