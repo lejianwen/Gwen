@@ -6,6 +6,8 @@ import (
 	"Gwen/model/response"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
+	"time"
 )
 
 type File struct {
@@ -46,4 +48,30 @@ func (f *File) Notify(c *gin.Context) {
 	fm.Url = global.Config.Oss.Host + "/" + fm.Filename
 	response.Success(c, fm)
 
+}
+
+// Upload 上传文件到本地
+// @Tags 文件
+// @Summary 上传文件到本地
+// @Description 上传文件到本地
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param file formData file true "上传文件示例"
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /file/upload [post]
+// @Security token
+func (f *File) Upload(c *gin.Context) {
+	file, _ := c.FormFile("file")
+	timePath := time.Now().Format("20060102") + "/"
+	webPath := "/upload/" + timePath
+	path := global.Config.Gin.ResourcesPath + webPath
+	dst := path + file.Filename
+	os.MkdirAll(path, os.ModePerm)
+	// 上传文件至指定目录
+	c.SaveUploadedFile(file, dst)
+	// 返回文件web地址
+	response.Success(c, gin.H{
+		"url": "http://127.0.0.1:8081" + webPath + file.Filename,
+	})
 }

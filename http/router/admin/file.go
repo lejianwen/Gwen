@@ -15,6 +15,8 @@ func (g *File) Init(rg *gin.RouterGroup) {
 	{
 		aR.POST("/notify", g.controller.Notify)
 		aR.OPTIONS("/oss_token", nil)
+		aR.OPTIONS("/upload", nil)
 		aR.Use(middleware.AdminAuth()).GET("/oss_token", g.controller.OssToken)
+		aR.POST("/upload", g.controller.Upload)
 	}
 }
