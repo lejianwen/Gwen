@@ -2,9 +2,9 @@ package controller
 
 import (
 	"Gwen/global"
+	"Gwen/http/request"
+	"Gwen/http/response"
 	"Gwen/model"
-	"Gwen/model/request"
-	"Gwen/model/response"
 	"Gwen/service"
 	"github.com/gin-gonic/gin"
 	"time"

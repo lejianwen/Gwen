@@ -2,8 +2,8 @@ package controller
 
 import (
 	"Gwen/global"
+	"Gwen/http/response"
 	"Gwen/lib/upload"
-	"Gwen/model/response"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"

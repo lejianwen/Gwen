@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"Gwen/http/response"
 	"Gwen/model"
-	"Gwen/model/response"
 	"Gwen/service"
 	"github.com/gin-gonic/gin"
 )
