@@ -1,6 +1,9 @@
 package cache
 
-import "github.com/go-redis/redis/v8"
+import (
+	"github.com/go-redis/redis/v8"
+	"sync"
+)
 
 type Handler interface {
 	Get(key string, value interface{}) error
@@ -21,12 +24,12 @@ const (
 func New(typ string) Handler {
 	var cache Handler
 	switch typ {
-	case "file":
-		cache = new(FileCache)
-	case "redis":
+	case TypeFile:
+		cache = NewFileCache()
+	case TypeRedis:
 		cache = new(RedisCache)
 	default:
-		cache = new(FileCache)
+		cache = NewFileCache()
 	}
 	return cache
 }
@@ -36,6 +39,8 @@ func NewRedis(conf *redis.Options) *RedisCache {
 	return cache
 }
 
-func NewFile() *FileCache {
-	return &FileCache{}
+func NewFileCache() *FileCache {
+	return &FileCache{
+		locks: make(map[string]*sync.Mutex),
+	}
 }

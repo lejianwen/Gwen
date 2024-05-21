@@ -31,7 +31,7 @@ type Oss struct {
 }
 
 const (
-	base64Table = "123QRSTUabcdVWXYZHijKLAWDCABDstEFGuvwxyzGHIJklmnopqr234560178912"
+	base64Table = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 )
 
 var coder = base64.NewEncoding(base64Table)

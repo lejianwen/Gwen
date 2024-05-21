@@ -9,6 +9,7 @@ import (
 func TestFileSet(t *testing.T) {
 	fc := &FileCache{}
 	re, err := fc.Set("123", "ddd", 0)
+	fmt.Println(Dir)
 	fmt.Println(re)
 	if err != nil {
 		fmt.Println(err.Error())

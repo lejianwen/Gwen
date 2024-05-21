@@ -7,7 +7,6 @@ import (
 	"Gwen/lib/cache"
 	"Gwen/lib/logger"
 	"Gwen/lib/orm"
-	"Gwen/lib/redis"
 	"Gwen/lib/upload"
 	"Gwen/utils"
 	"fmt"
@@ -16,7 +15,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
-	redis2 "github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v8"
 	"reflect"
 )
 
@@ -42,15 +41,19 @@ func main() {
 	})
 
 	//redis
-	global.Redis = redis.New(global.Config.Redis.Addr, global.Config.Redis.Password, global.Config.Redis.Db)
+	global.Redis = redis.NewClient(&redis.Options{
+		Addr:     global.Config.Redis.Addr,
+		Password: global.Config.Redis.Password,
+		DB:       global.Config.Redis.Db,
+	})
 
 	//cache
 	if global.Config.Cache.Type == cache.TypeFile {
-		fc := cache.NewFile()
+		fc := cache.NewFileCache()
 		fc.SetDir(global.Config.Cache.FileDir)
 		global.Cache = fc
 	} else if global.Config.Cache.Type == cache.TypeRedis {
-		global.Cache = cache.NewRedis(&redis2.Options{
+		global.Cache = cache.NewRedis(&redis.Options{
 			Addr:     global.Config.Cache.RedisAddr,
 			Password: global.Config.Cache.RedisPwd,
 			DB:       global.Config.Cache.RedisDb,

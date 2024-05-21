@@ -380,6 +380,54 @@ paths:
       summary: 管理员角色编辑
       tags:
       - 管理员角色
+  /file/oss_token:
+    get:
+      consumes:
+      - application/json
+      description: 获取ossToken
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 获取ossToken
+      tags:
+      - 文件
+  /file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传文件到本地
+      parameters:
+      - description: 上传文件示例
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - token: []
+      summary: 上传文件到本地
+      tags:
+      - 文件
   /login:
     post:
       consumes:

@@ -4,14 +4,28 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"sync"
 	"time"
 )
 
 var Dir string = os.TempDir()
 
 type FileCache struct {
+	mu    sync.Mutex
+	locks map[string]*sync.Mutex
+}
+
+func (fc *FileCache) getLock(key string) *sync.Mutex {
+	fc.mu.Lock()
+	defer fc.mu.Unlock()
+	if fc.locks == nil {
+		fc.locks = make(map[string]*sync.Mutex)
+	}
+	if _, ok := fc.locks[key]; !ok {
+		fc.locks[key] = new(sync.Mutex)
+	}
+	return fc.locks[key]
 }
 
 func (c *FileCache) Get(key string, value interface{}) error {
@@ -26,7 +40,7 @@ func (c *FileCache) Get(key string, value interface{}) error {
 		os.Remove(f)
 		return err
 	}
-	data, err := ioutil.ReadFile(f)
+	data, err := os.ReadFile(f)
 	if err != nil {
 		return err
 	}
@@ -36,14 +50,17 @@ func (c *FileCache) Get(key string, value interface{}) error {
 
 func (c *FileCache) Set(key string, value interface{}, exp int) (bool, error) {
 	f := c.fileName(key)
+
+	lock := c.getLock(f)
+	lock.Lock()
+	defer lock.Unlock()
+
 	str, err := c.EncodeValue(value)
 	if err != nil {
 		return false, err
 	}
-	// todo 给文件加锁，解锁， 懒得搞了
-	//c.Lock()
 
-	err = ioutil.WriteFile(f, ([]byte)(str), 0644)
+	err = os.WriteFile(f, ([]byte)(str), 0644)
 	if err != nil {
 		return false, err
 	}

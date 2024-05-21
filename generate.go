@@ -1,4 +1,4 @@
-package warehouse
+package Gwen
 
 //go:generate go env -w GO111MODULE=on
 //go:generate go env -w GOPROXY=https://goproxy.cn,direct
