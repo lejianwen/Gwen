@@ -1,21 +1,19 @@
 package cache
 
 import (
-	"github.com/go-redis/redis/v8"
-	"sync"
+	"encoding/json"
 )
 
 type Handler interface {
 	Get(key string, value interface{}) error
 	Set(key string, value interface{}, exp int) (bool, error)
 	Gc() error
-	EncodeValue(value interface{}) (string, error)
-	DecodeValue(value string, rtv interface{}) error
 }
 
 // MaxTimeOut 最大超时时间
 
 const (
+	TypeMem    = "memory"
 	TypeRedis  = "redis"
 	TypeFile   = "file"
 	MaxTimeOut = 365 * 24 * 3600
@@ -28,19 +26,43 @@ func New(typ string) Handler {
 		cache = NewFileCache()
 	case TypeRedis:
 		cache = new(RedisCache)
+	case TypeMem: // memory
+		cache = NewMemoryCache(0)
 	default:
-		cache = NewFileCache()
+		cache = NewMemoryCache(0)
 	}
 	return cache
 }
 
-func NewRedis(conf *redis.Options) *RedisCache {
-	cache := RedisCacheInit(conf)
-	return cache
+func EncodeValue(value interface{}) (string, error) {
+	if v, ok := value.(string); ok {
+		return v, nil
+	}
+	if v, ok := value.([]byte); ok {
+		return string(v), nil
+	}
+	b, err := json.Marshal(value)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
-func NewFileCache() *FileCache {
-	return &FileCache{
-		locks: make(map[string]*sync.Mutex),
+func DecodeValue(value string, rtv interface{}) error {
+	//判断rtv的类型是否是string，如果是string，直接赋值并返回
+	switch rtv.(type) {
+	case *string:
+		*(rtv.(*string)) = value
+		return nil
+	case *[]byte:
+		*(rtv.(*[]byte)) = []byte(value)
+		return nil
+	//struct
+	case *interface{}:
+		err := json.Unmarshal(([]byte)(value), rtv)
+		return err
+	default:
+		err := json.Unmarshal(([]byte)(value), rtv)
+		return err
 	}
 }

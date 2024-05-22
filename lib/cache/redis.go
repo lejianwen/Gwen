@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
@@ -24,12 +23,12 @@ func (c *RedisCache) Get(key string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	err1 := c.DecodeValue(data, value)
+	err1 := DecodeValue(data, value)
 	return err1
 }
 
 func (c *RedisCache) Set(key string, value interface{}, exp int) (bool, error) {
-	str, err := c.EncodeValue(value)
+	str, err := EncodeValue(value)
 	if err != nil {
 		return false, err
 	}
@@ -44,18 +43,10 @@ func (c *RedisCache) Set(key string, value interface{}, exp int) (bool, error) {
 }
 
 func (c *RedisCache) Gc() error {
-	_, err := c.rdb.FlushDB(ctx).Result()
-	return err
+	return nil
 }
 
-func (c *RedisCache) EncodeValue(value interface{}) (string, error) {
-	js, err := json.Marshal(value)
-	if err != nil {
-		return "", err
-	}
-	return string(js), err
-}
-func (c *RedisCache) DecodeValue(value string, rtv interface{}) error {
-	err := json.Unmarshal(([]byte)(value), rtv)
-	return err
+func NewRedis(conf *redis.Options) *RedisCache {
+	cache := RedisCacheInit(conf)
+	return cache
 }
