@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"container/list"
 	"errors"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -56,6 +57,14 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 func (m *MemoryCache) Get(key string, value interface{}) error {
+	// 使用反射将存储的值设置到传入的指针变量中
+	val := reflect.ValueOf(value)
+	if val.Kind() != reflect.Ptr {
+		return errors.New("value must be a pointer")
+	}
+	//设为空值
+	val.Elem().Set(reflect.Zero(val.Elem().Type()))
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -79,13 +88,13 @@ func (m *MemoryCache) Get(key string, value interface{}) error {
 	return nil
 }
 
-func (m *MemoryCache) Set(key string, value interface{}, exp int) (bool, error) {
+func (m *MemoryCache) Set(key string, value interface{}, exp int) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	v, err := EncodeValue(value)
 	if err != nil {
-		return false, err
+		return err
 	}
 	//key 所占用的内存
 	keyBytes := int64(len(key))
@@ -93,7 +102,7 @@ func (m *MemoryCache) Set(key string, value interface{}, exp int) (bool, error) 
 	valueBytes := int64(len(v))
 	//判断是否超过最大内存限制
 	if m.maxBytes != 0 && m.maxBytes < keyBytes+valueBytes {
-		return false, errors.New("exceed maxBytes")
+		return errors.New("exceed maxBytes")
 	}
 	m.usedBytes += keyBytes + valueBytes
 	if m.maxBytes != 0 && m.usedBytes > m.maxBytes {
@@ -108,6 +117,7 @@ func (m *MemoryCache) Set(key string, value interface{}, exp int) (bool, error) 
 		item.Value = v
 		item.Expiration = expiration
 		heap.Fix(&m.pq, item.Index)
+		m.ll.MoveToBack(item.ListEle)
 	} else {
 		ele := m.ll.PushBack(key)
 		item = &CacheItem{
@@ -120,7 +130,7 @@ func (m *MemoryCache) Set(key string, value interface{}, exp int) (bool, error) 
 		heap.Push(&m.pq, item)
 	}
 
-	return true, nil
+	return nil
 }
 
 func (m *MemoryCache) RemoveOldest() {

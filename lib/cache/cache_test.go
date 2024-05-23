@@ -3,13 +3,43 @@ package cache
 import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"reflect"
 	"testing"
 )
 
+func TestSimpleCache(t *testing.T) {
+
+	type st struct {
+		A string
+		B string
+	}
+
+	items := map[string]interface{}{}
+	items["a"] = "b"
+	items["b"] = "c"
+
+	ab := &st{
+		A: "a",
+		B: "b",
+	}
+	items["ab"] = *ab
+
+	a := items["a"]
+	fmt.Println(a)
+
+	b := items["b"]
+	fmt.Println(b)
+
+	ab.A = "aa"
+	ab2 := st{}
+	ab2 = (items["ab"]).(st)
+	fmt.Println(ab2, reflect.TypeOf(ab2))
+
+}
+
 func TestFileCacheSet(t *testing.T) {
 	fc := New("file")
-	re, err := fc.Set("123", "ddd", 0)
-	fmt.Println(re)
+	err := fc.Set("123", "ddd", 0)
 	if err != nil {
 		fmt.Println(err.Error())
 		t.Fatalf("写入失败")
@@ -18,7 +48,7 @@ func TestFileCacheSet(t *testing.T) {
 
 func TestFileCacheGet(t *testing.T) {
 	fc := New("file")
-	_, err := fc.Set("123", "45156", 300)
+	err := fc.Set("123", "45156", 300)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}
@@ -36,8 +66,7 @@ func TestRedisCacheSet(t *testing.T) {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	re, err := rc.Set("123", "ddd", 0)
-	fmt.Println(re)
+	err := rc.Set("123", "ddd", 0)
 	if err != nil {
 		fmt.Println(err.Error())
 		t.Fatalf("写入失败")
@@ -50,7 +79,7 @@ func TestRedisCacheGet(t *testing.T) {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	_, err := rc.Set("123", "451156", 300)
+	err := rc.Set("123", "451156", 300)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}

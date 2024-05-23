@@ -14,8 +14,7 @@ func TestRedisSet(t *testing.T) {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	re, err := rc.Set("123", "ddd", 0)
-	fmt.Println(re)
+	err := rc.Set("123", "ddd", 0)
 	if err != nil {
 		fmt.Println(err.Error())
 		t.Fatalf("写入失败")
@@ -28,7 +27,7 @@ func TestRedisGet(t *testing.T) {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	_, err := rc.Set("123", "451156", 300)
+	err := rc.Set("123", "451156", 300)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}
@@ -53,7 +52,7 @@ func TestRedisGetJson(t *testing.T) {
 	old := &r{
 		Aa: "ab", B: "cdc",
 	}
-	_, err := rc.Set("1233", old, 300)
+	err := rc.Set("1233", old, 300)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}

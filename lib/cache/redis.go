@@ -27,19 +27,16 @@ func (c *RedisCache) Get(key string, value interface{}) error {
 	return err1
 }
 
-func (c *RedisCache) Set(key string, value interface{}, exp int) (bool, error) {
+func (c *RedisCache) Set(key string, value interface{}, exp int) error {
 	str, err := EncodeValue(value)
 	if err != nil {
-		return false, err
+		return err
 	}
 	if exp <= 0 {
 		exp = MaxTimeOut
 	}
 	_, err1 := c.rdb.Set(ctx, key, str, time.Duration(exp)*time.Second).Result()
-	if err1 != nil {
-		return false, err1
-	}
-	return true, nil
+	return err1
 }
 
 func (c *RedisCache) Gc() error {

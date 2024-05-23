@@ -6,7 +6,7 @@ import (
 
 type Handler interface {
 	Get(key string, value interface{}) error
-	Set(key string, value interface{}, exp int) (bool, error)
+	Set(key string, value interface{}, exp int) error
 	Gc() error
 }
 
@@ -35,12 +35,12 @@ func New(typ string) Handler {
 }
 
 func EncodeValue(value interface{}) (string, error) {
-	if v, ok := value.(string); ok {
+	/*if v, ok := value.(string); ok {
 		return v, nil
 	}
 	if v, ok := value.([]byte); ok {
 		return string(v), nil
-	}
+	}*/
 	b, err := json.Marshal(value)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func EncodeValue(value interface{}) (string, error) {
 
 func DecodeValue(value string, rtv interface{}) error {
 	//判断rtv的类型是否是string，如果是string，直接赋值并返回
-	switch rtv.(type) {
+	/*switch rtv.(type) {
 	case *string:
 		*(rtv.(*string)) = value
 		return nil
@@ -65,4 +65,7 @@ func DecodeValue(value string, rtv interface{}) error {
 		err := json.Unmarshal(([]byte)(value), rtv)
 		return err
 	}
+	*/
+	err := json.Unmarshal(([]byte)(value), rtv)
+	return err
 }

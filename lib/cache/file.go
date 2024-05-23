@@ -27,50 +27,58 @@ func (fc *FileCache) getLock(key string) *sync.Mutex {
 }
 
 func (c *FileCache) Get(key string, value interface{}) error {
+	data, _ := c.getValue(key)
+	err := DecodeValue(data, value)
+	return err
+}
+
+// 获取值,如果文件不存在或者过期，返回空，过滤掉错误
+func (c *FileCache) getValue(key string) (string, error) {
 	f := c.fileName(key)
 	fileInfo, err := os.Stat(f)
 	if err != nil {
 		//文件不存在
-		return nil
+		return "", nil
 	}
 	difT := time.Now().Sub(fileInfo.ModTime())
 	if difT >= 0 {
 		os.Remove(f)
-		return nil
+		return "", nil
 	}
 	data, err := os.ReadFile(f)
 	if err != nil {
-		return err
+		return "", nil
 	}
-	err1 := DecodeValue(string(data), value)
-	return err1
+	return string(data), nil
 }
 
-func (c *FileCache) Set(key string, value interface{}, exp int) (bool, error) {
+// 保存值
+func (c *FileCache) saveValue(key string, value string, exp int) error {
 	f := c.fileName(key)
-
 	lock := c.getLock(f)
 	lock.Lock()
 	defer lock.Unlock()
 
-	str, err := EncodeValue(value)
+	err := os.WriteFile(f, ([]byte)(value), 0644)
 	if err != nil {
-		return false, err
-	}
-
-	err = os.WriteFile(f, ([]byte)(str), 0644)
-	if err != nil {
-		return false, err
+		return err
 	}
 	if exp <= 0 {
 		exp = MaxTimeOut
 	}
 	expFromNow := time.Now().Add(time.Duration(exp) * time.Second)
 	err = os.Chtimes(f, expFromNow, expFromNow)
+	return err
+}
+
+func (c *FileCache) Set(key string, value interface{}, exp int) error {
+	str, err := EncodeValue(value)
 	if err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+
+	err = c.saveValue(key, str, exp)
+	return err
 }
 
 func (c *FileCache) SetDir(path string) {

@@ -8,8 +8,7 @@ import (
 
 func TestMemorySet(t *testing.T) {
 	mc := NewMemoryCache(0)
-	re, err := mc.Set("123", "44567", 0)
-	fmt.Println(re)
+	err := mc.Set("123", "44567", 0)
 	if err != nil {
 		fmt.Println(err.Error())
 		t.Fatalf("写入失败")
@@ -35,7 +34,7 @@ func TestMemorySetExpGet(t *testing.T) {
 	mc := NewMemoryCache(0)
 	mc.Set("1", "4456711", 10)
 	mc.Set("2", "44567111", 5)
-	_, err := mc.Set("3", "44567", 3)
+	err := mc.Set("3", "44567", 3)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}
@@ -66,12 +65,12 @@ func TestMemorySetExpGet(t *testing.T) {
 
 }
 func TestMemoryLru(t *testing.T) {
-	mc := NewMemoryCache(10)
+	mc := NewMemoryCache(18)
 	mc.Set("1", "1111", 10)
 	mc.Set("2", "2222", 5)
 	//读取一次，2就会被放到最后
 	mc.Get("1", nil)
-	_, err := mc.Set("3", "3333", 3)
+	err := mc.Set("3", "三", 3)
 	if err != nil {
 		//t.Fatalf("写入失败")
 	}
@@ -81,25 +80,27 @@ func TestMemoryLru(t *testing.T) {
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res3", res)
 	res = ""
 	err = mc.Get("2", &res)
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res2", res)
 	res = ""
 	err = mc.Get("1", &res)
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res1", res)
 
 }
 func BenchmarkMemorySet(b *testing.B) {
 	mc := NewMemoryCache(0)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		mc.Set("123", "{dsv}", 1000)
+		key := fmt.Sprintf("key%d", i)
+		value := fmt.Sprintf("value%d", i)
+		mc.Set(key, value, 1000)
 	}
 }
