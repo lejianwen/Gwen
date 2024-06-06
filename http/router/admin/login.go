@@ -1,13 +1,13 @@
 package admin
 
 import (
-	"Gwen/http/controller"
+	"Gwen/http/controller/admin"
 	"Gwen/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type Login struct {
-	controller *controller.Login
+	controller *admin.Login
 }
 
 func (g *Login) Bind(rg *gin.RouterGroup) {

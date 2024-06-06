@@ -1,4 +1,4 @@
-package controller
+package admin
 
 import (
 	"Gwen/global"
@@ -6,103 +6,114 @@ import (
 	"Gwen/http/response"
 	"Gwen/model"
 	"Gwen/service"
+	"Gwen/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"strconv"
 )
 
-type AdminRole struct {
+type Admin struct {
 }
 
-//Detail 管理员角色
-// @Tags 管理员角色
-// @Summary 管理员角色详情
-// @Description 管理员角色详情
+// Detail 管理员
+// @Tags 管理员
+// @Summary 管理员详情
+// @Description 管理员详情
 // @Accept  json
 // @Produce  json
 // @Param id path int true "ID"
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin_role/detail/{id} [get]
+// @Router /admin/detail/{id} [get]
 // @Security token
-func (ct *AdminRole) Detail(c *gin.Context) {
+func (ct *Admin) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
-	item := service.AllService.AdminRoleService.InfoById(uint(iid))
-	if item.Id > 0 {
-		response.Success(c, item)
+	admin := service.AllService.AdminService.Info(uint(iid))
+	if admin.Id > 0 {
+		admin.Token = "" // 去掉token
+		response.Success(c, admin)
 		return
 	}
 	response.Fail(c, 101, "信息不存在")
 	return
 }
 
-//Create 管理员角色创建
-// @Tags 管理员角色
-// @Summary 管理员角色创建
-// @Description 管理员角色创建
+// Create 管理员
+// @Tags 管理员
+// @Summary 创建管理员
+// @Description 创建管理员
 // @Accept  json
 // @Produce  json
-// @Param body body request.AdminRoleForm true "管理员角色"
+// @Param body body request.AdminForm true "管理员信息"
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin_role/create [post]
+// @Router /admin/create [post]
 // @Security token
-func (ct *AdminRole) Create(c *gin.Context) {
-	f := &request.AdminRoleForm{}
+func (ct *Admin) Create(c *gin.Context) {
+	f := &request.AdminForm{}
 
 	if err := c.ShouldBindJSON(f); err != nil {
 		global.Logger.Error(err)
 		response.Fail(c, 101, "系统错误")
 		return
 	}
-	item := &model.AdminRole{
-		SeeCb: 0,
-		Name:  f.Name,
+	admin := &model.Admin{
+		RoleId:   f.RoleId,
+		Username: f.Username,
+		Password: utils.Md5(f.Password),
+		Nickname: f.Nickname,
+		Status:   f.Status,
 	}
-	err := service.AllService.AdminRoleService.Create(item)
+	err := service.AllService.AdminService.Create(admin)
 	if err != nil {
 		response.Fail(c, 101, "创建失败")
 		return
 	}
-	response.Success(c, item)
+	response.Success(c, admin)
 }
 
-//List 列表
-// @Tags 管理员角色
-// @Summary 管理员角色列表
-// @Description 管理员角色列表
+// List 列表
+// @Tags 管理员
+// @Summary 管理员列表
+// @Description 管理员列表
 // @Accept  json
 // @Produce  json
 // @Param page query int false "页码"
 // @Param page_size query int false "页大小"
+// @Param nickname query int false "昵称"
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin_role/list [get]
+// @Router /admin/list [get]
 // @Security token
-func (ct *AdminRole) List(c *gin.Context) {
-	query := &model.Pagination{}
+func (ct *Admin) List(c *gin.Context) {
+	query := &request.AdminListQuery{}
 	if err := c.ShouldBindQuery(query); err != nil {
 		global.Logger.Error(err)
 		response.Fail(c, 101, "参数错误")
 		return
 	}
-	res := service.AllService.AdminRoleService.List(uint(query.Page), uint(query.PageSize), nil)
+	res := service.AllService.AdminService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
+		if query.Nickname != "" {
+			tx.Where("nickname like ?", "%"+query.Nickname+"%")
+		}
+	})
 	response.Success(c, res)
 }
 
-//Update 编辑
-// @Tags 管理员角色
-// @Summary 管理员角色编辑
-// @Description 管理员角色编辑
+// Update 编辑
+// @Tags 管理员
+// @Summary 管理员编辑
+// @Description 管理员编辑
 // @Accept  json
 // @Produce  json
-// @Param body body request.AdminRoleForm true "管理员信息"
+// @Param body body request.AdminForm true "管理员信息"
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin_role/update [post]
+// @Router /admin/update [post]
 // @Security token
-func (ct *AdminRole) Update(c *gin.Context) {
-	f := &request.AdminRoleForm{}
+func (ct *Admin) Update(c *gin.Context) {
+	f := &request.AdminForm{}
 	if err := c.ShouldBindJSON(f); err != nil {
 		global.Logger.Error(err)
 		response.Fail(c, 101, "系统错误")
@@ -113,12 +124,15 @@ func (ct *AdminRole) Update(c *gin.Context) {
 		response.Fail(c, 101, errList[0])
 		return
 	}
-	item := service.AllService.AdminRoleService.InfoById(f.Id)
-	if item.Id > 0 {
+	admin := service.AllService.AdminService.Info(f.Id)
+	if admin.Id > 0 {
 		v := map[string]interface{}{
-			"name": f.Name,
+			"role_id":  f.RoleId,
+			"username": f.Username,
+			"nickname": f.Nickname,
+			"status":   f.Status,
 		}
-		err := service.AllService.AdminRoleService.Update(item, v)
+		err := service.AllService.AdminService.Update(admin, v)
 		if err == nil {
 			response.Success(c, nil)
 			return
@@ -129,19 +143,19 @@ func (ct *AdminRole) Update(c *gin.Context) {
 	response.Fail(c, 101, "信息不存在")
 }
 
-//Delete 删除
-// @Tags 管理员角色
-// @Summary 管理员角色删除
-// @Description 管理员角色删除
+// Delete 删除
+// @Tags 管理员
+// @Summary 管理员删除
+// @Description 管理员编删除
 // @Accept  json
 // @Produce  json
-// @Param body body model.AdminRole true "管理员角色信息"
+// @Param body body request.AdminForm true "管理员信息"
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin_role/delete [post]
+// @Router /admin/delete [post]
 // @Security token
-func (ct *AdminRole) Delete(c *gin.Context) {
-	f := &model.AdminRole{}
+func (ct *Admin) Delete(c *gin.Context) {
+	f := &request.AdminForm{}
 	if err := c.ShouldBindJSON(f); err != nil {
 		global.Logger.Error(err)
 		response.Fail(c, 101, "系统错误")
@@ -153,9 +167,9 @@ func (ct *AdminRole) Delete(c *gin.Context) {
 		response.Fail(c, 101, "参数错误")
 		return
 	}
-	item := service.AllService.AdminRoleService.InfoById(f.Id)
-	if item.Id > 0 {
-		err := service.AllService.AdminRoleService.Delete(item)
+	admin := service.AllService.AdminService.Info(f.Id)
+	if admin.Id > 0 {
+		err := service.AllService.AdminService.Delete(admin)
 		if err == nil {
 			response.Success(c, nil)
 			return
@@ -164,4 +178,8 @@ func (ct *AdminRole) Delete(c *gin.Context) {
 		return
 	}
 	response.Fail(c, 101, "信息不存在")
+}
+
+func (ct *Admin) Error(c *gin.Context) {
+	panic("测试")
 }
