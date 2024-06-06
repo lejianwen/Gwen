@@ -19,7 +19,7 @@ import (
 	"reflect"
 )
 
-// @title 供应商后台管理系统API
+// @title 后台管理系统API
 // @version 1.0
 // @description 后台接口
 // @basePath /admin-api
@@ -79,11 +79,15 @@ func main() {
 
 func InitValidator() {
 	validate := validator.New()
-	en := en.New()
+	enT := en.New()
 	cn := zh_Hans_CN.New()
-	uni := ut.New(en, cn)
+	uni := ut.New(enT, cn)
 	trans, _ := uni.GetTranslator("cn")
-	zh_translations.RegisterDefaultTranslations(validate, trans)
+	err := zh_translations.RegisterDefaultTranslations(validate, trans)
+	if err != nil {
+		//退出
+		panic(err)
+	}
 	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 		label := field.Tag.Get("label")
 		if label == "" {
