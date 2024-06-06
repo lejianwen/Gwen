@@ -1,15 +1,15 @@
 package admin
 
 import (
-	controller2 "Gwen/http/controller"
+	"Gwen/http/controller"
 	"github.com/gin-gonic/gin"
 )
 
 type Admin struct {
-	controller *controller2.Admin
+	controller *controller.Admin
 }
 
-func (g *Admin) Init(rg *gin.RouterGroup) {
+func (g *Admin) Bind(rg *gin.RouterGroup) {
 	aR := rg.Group("/admin")
 	{
 		aR.GET("/list", g.controller.List)

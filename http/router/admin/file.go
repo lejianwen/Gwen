@@ -1,16 +1,16 @@
 package admin
 
 import (
-	controller2 "Gwen/http/controller"
+	"Gwen/http/controller"
 	"Gwen/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type File struct {
-	controller *controller2.File
+	controller *controller.File
 }
 
-func (g *File) Init(rg *gin.RouterGroup) {
+func (g *File) Bind(rg *gin.RouterGroup) {
 	aR := rg.Group("/file").Use(middleware.Cors())
 	{
 		aR.POST("/notify", g.controller.Notify)

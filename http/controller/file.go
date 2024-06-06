@@ -13,7 +13,7 @@ import (
 type File struct {
 }
 
-//OssToken 文件
+// OssToken 文件
 // @Tags 文件
 // @Summary 获取ossToken
 // @Description 获取ossToken
@@ -67,11 +67,17 @@ func (f *File) Upload(c *gin.Context) {
 	webPath := "/upload/" + timePath
 	path := global.Config.Gin.ResourcesPath + webPath
 	dst := path + file.Filename
-	os.MkdirAll(path, os.ModePerm)
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return
+	}
 	// 上传文件至指定目录
-	c.SaveUploadedFile(file, dst)
+	err = c.SaveUploadedFile(file, dst)
+	if err != nil {
+		return
+	}
 	// 返回文件web地址
 	response.Success(c, gin.H{
-		"url": "http://127.0.0.1:8081" + webPath + file.Filename,
+		"url": webPath + file.Filename,
 	})
 }

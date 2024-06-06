@@ -1,15 +1,15 @@
 package admin
 
 import (
-	controller2 "Gwen/http/controller"
+	"Gwen/http/controller"
 	"github.com/gin-gonic/gin"
 )
 
 type AdminRole struct {
-	controller *controller2.AdminRole
+	controller *controller.AdminRole
 }
 
-func (g *AdminRole) Init(rg *gin.RouterGroup) {
+func (g *AdminRole) Bind(rg *gin.RouterGroup) {
 	aR := rg.Group("/admin_role")
 	{
 		aR.GET("/detail/:id", g.controller.Detail)

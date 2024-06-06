@@ -10,13 +10,14 @@ import (
 
 func AdminInit(g *gin.Engine) {
 
-	(&admin.Login{}).Init(g.Group("/admin-api"))
-	(&admin.File{}).Init(g.Group("/admin-api"))
-
 	adg := g.Group("/admin-api")
-	adg.Use(middleware.AdminAuth())
-	(&admin.Admin{}).Init(adg)
-	(&admin.AdminRole{}).Init(adg)
+	(&admin.Login{}).Bind(adg)
 
+	adg.Use(middleware.AdminAuth())
+	(&admin.File{}).Bind(adg)
+	(&admin.Admin{}).Bind(adg)
+	(&admin.AdminRole{}).Bind(adg)
+
+	//访问静态文件
 	g.StaticFS("/upload", http.Dir(global.Config.Gin.ResourcesPath+"/upload"))
 }

@@ -10,7 +10,7 @@ type Login struct {
 	controller *controller.Login
 }
 
-func (g *Login) Init(rg *gin.RouterGroup) {
+func (g *Login) Bind(rg *gin.RouterGroup) {
 	rg.POST("/login", g.controller.Login)
 	rg.Use(middleware.AdminAuth()).POST("/logout", g.controller.Logout)
 }
