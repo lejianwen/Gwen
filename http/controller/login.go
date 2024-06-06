@@ -60,14 +60,15 @@ func (ct *Login) Login(c *gin.Context) {
 // @Success 200 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /logout [post]
-// @Security token
 func (ct *Login) Logout(c *gin.Context) {
 	a, ex := c.Get("curAdmin")
 	if !ex {
 		response.Fail(c, 101, "账号不存在")
+		return
 	}
 	if a == nil {
 		response.Fail(c, 101, "账号不存在")
+		return
 	}
 	ad := a.(*model.Admin)
 	ad.Token = ""

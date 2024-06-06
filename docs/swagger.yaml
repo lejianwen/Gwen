@@ -91,7 +91,7 @@ definitions:
 info:
   contact: {}
   description: 后台接口
-  title: 供应商后台管理系统API
+  title: 后台管理系统API
   version: "1.0"
 paths:
   /admin/create:

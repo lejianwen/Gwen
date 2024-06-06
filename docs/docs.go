@@ -803,7 +803,7 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "",
 	BasePath:    "/admin-api",
 	Schemes:     []string{},
-	Title:       "供应商后台管理系统API",
+	Title:       "后台管理系统API",
 	Description: "后台接口",
 }
 

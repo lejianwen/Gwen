@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "后台接口",
-        "title": "供应商后台管理系统API",
+        "title": "后台管理系统API",
         "contact": {},
         "version": "1.0"
     },
