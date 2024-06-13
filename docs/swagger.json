@@ -597,11 +597,6 @@
         },
         "/logout": {
             "post": {
-                "security": [
-                    {
-                        "token": []
-                    }
-                ],
                 "description": "登出",
                 "consumes": [
                     "application/json"
@@ -650,7 +645,7 @@
                     "type": "integer"
                 },
                 "status": {
-                    "type": "integer"
+                    "$ref": "#/definitions/model.StatusCode"
                 },
                 "token": {
                     "type": "string"
@@ -692,6 +687,21 @@
                 }
             }
         },
+        "model.StatusCode": {
+            "type": "integer",
+            "enum": [
+                1,
+                2
+            ],
+            "x-enum-comments": {
+                "COMMON_STATUS_DISABLED": "通用状态 禁用",
+                "COMMON_STATUS_ENABLE": "通用状态 启用"
+            },
+            "x-enum-varnames": [
+                "COMMON_STATUS_ENABLE",
+                "COMMON_STATUS_DISABLED"
+            ]
+        },
         "request.AdminForm": {
             "type": "object",
             "required": [
@@ -715,7 +725,12 @@
                     "type": "integer"
                 },
                 "status": {
-                    "type": "integer"
+                    "minimum": 0,
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.StatusCode"
+                        }
+                    ]
                 },
                 "username": {
                     "type": "string"
@@ -744,10 +759,14 @@
             ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 5
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 5
                 }
             }
         },

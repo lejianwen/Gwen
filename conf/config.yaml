@@ -12,9 +12,8 @@ redis:
   db: 0
 logger:
   path: "./runtime/log.txt"
-  level: "debug"
+  level: "trace" #trace,debug,info,warn,error,fatal
   report-caller: true
-  mode: "release" #release,debug
 cache:
   type: "file"
   file-dir: "./runtime/cache"

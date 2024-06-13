@@ -43,7 +43,7 @@ func (s *AdminService) InfoByPwd(username, password string) *model.Admin {
 func (s *AdminService) GenerateToken(admin *model.Admin) string {
 	rand.Seed(time.Now().UnixNano())
 	// id + pwd
-	str := strconv.FormatUint(uint64(admin.Id), 10) + admin.Password + string(rand.Intn(1000))
+	str := strconv.FormatUint(uint64(admin.Id), 10) + admin.Password + strconv.Itoa(rand.Intn(1000))
 	return utils.Md5(str)
 }
 

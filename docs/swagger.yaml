@@ -13,7 +13,7 @@ definitions:
       role_id:
         type: integer
       status:
-        type: integer
+        $ref: '#/definitions/model.StatusCode'
       token:
         type: string
       token_expire_time:
@@ -40,6 +40,17 @@ definitions:
       updated_at:
         type: string
     type: object
+  model.StatusCode:
+    enum:
+    - 1
+    - 2
+    type: integer
+    x-enum-comments:
+      COMMON_STATUS_DISABLED: 通用状态 禁用
+      COMMON_STATUS_ENABLE: 通用状态 启用
+    x-enum-varnames:
+    - COMMON_STATUS_ENABLE
+    - COMMON_STATUS_DISABLED
   request.AdminForm:
     properties:
       id:
@@ -51,7 +62,9 @@ definitions:
       role_id:
         type: integer
       status:
-        type: integer
+        allOf:
+        - $ref: '#/definitions/model.StatusCode'
+        minimum: 0
       username:
         type: string
     required:
@@ -73,8 +86,12 @@ definitions:
   request.Login:
     properties:
       password:
+        maxLength: 10
+        minLength: 5
         type: string
       username:
+        maxLength: 10
+        minLength: 5
         type: string
     required:
     - password
@@ -475,8 +492,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      security:
-      - token: []
       summary: 登出
       tags:
       - 登录

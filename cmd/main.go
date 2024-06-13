@@ -37,7 +37,6 @@ func main() {
 		Path:         global.Config.Logger.Path,
 		Level:        global.Config.Logger.Level,
 		ReportCaller: global.Config.Logger.ReportCaller,
-		Mode:         global.Config.Logger.Mode,
 	})
 
 	//redis

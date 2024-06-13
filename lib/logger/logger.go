@@ -16,7 +16,6 @@ type Config struct {
 	Path         string
 	Level        string
 	ReportCaller bool
-	Mode         string
 }
 
 func New(c *Config) *log.Logger {
@@ -30,26 +29,18 @@ func New(c *Config) *log.Logger {
 
 	// 日志文件
 	f := c.Path
-	writer, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		panic("open log file fail!")
-	}
-
-	var writes io.Writer
-
-	//正式环境输出到日志文件,
-	//开发环境输出到控制台和日志文件
-	//其他只输出到控制台
-	if c.Mode == ReleaseMode {
-		writes = io.MultiWriter(writer)
-	} else if c.Mode == DebugMode {
-		writes = io.MultiWriter(writer, os.Stdout)
+	var write io.Writer
+	if f != "" {
+		fwriter, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		if err != nil {
+			panic("open log file fail!")
+		}
+		write = io.MultiWriter(fwriter, os.Stdout)
 	} else {
-		writes = io.MultiWriter(os.Stdout)
-		defer writer.Close()
+		write = os.Stdout
 	}
 
-	log.SetOutput(writes)
+	log.SetOutput(write)
 
 	log.SetReportCaller(c.ReportCaller)
 
