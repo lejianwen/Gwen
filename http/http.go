@@ -22,5 +22,22 @@ func Init() {
 	g.Use(middleware.Logger(), gin.Recovery())
 
 	router.Init(g)
-	Run(g)
+	Run(g, global.Config.Gin.AdminAddr)
+}
+
+func ApiInit() {
+	gin.SetMode(global.Config.Gin.Mode)
+	g := gin.New()
+
+	if global.Config.Gin.Mode == gin.ReleaseMode {
+		//修改gin Recovery日志 输出为logger的输出点
+		if global.Logger != nil {
+			gin.DefaultErrorWriter = global.Logger.WriterLevel(logrus.ErrorLevel)
+		}
+	}
+
+	g.Use(middleware.Logger(), gin.Recovery())
+
+	router.ApiInit(g)
+	Run(g, global.Config.Gin.ApiAddr)
 }

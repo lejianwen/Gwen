@@ -1,6 +1,7 @@
 gin:
-  addr: ":8081"
-  mode: "debug" #release,debug,test
+  api-addr: ":8082"
+  admin-addr: ":8081"
+  mode: "release" #release,debug,test
   resources-path: 'resources/public'  #对外静态文件目录
 mysql:
   dns: "root:111111@(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
@@ -27,3 +28,6 @@ oss:
   callback-url: ""
   expire-time: 30
   max-byte: 10240
+jwt:
+  private-key: "./conf/jwt_pri.pem"
+  expire-duration: 360000

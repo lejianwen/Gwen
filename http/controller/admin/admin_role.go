@@ -1,4 +1,4 @@
-package controller
+package admin
 
 import (
 	"Gwen/global"
@@ -13,14 +13,14 @@ import (
 type AdminRole struct {
 }
 
-//Detail 管理员角色
+// Detail 管理员角色
 // @Tags 管理员角色
 // @Summary 管理员角色详情
 // @Description 管理员角色详情
 // @Accept  json
 // @Produce  json
 // @Param id path int true "ID"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.AdminRole}
 // @Failure 500 {object} response.Response
 // @Router /admin_role/detail/{id} [get]
 // @Security token
@@ -36,14 +36,14 @@ func (ct *AdminRole) Detail(c *gin.Context) {
 	return
 }
 
-//Create 管理员角色创建
+// Create 管理员角色创建
 // @Tags 管理员角色
 // @Summary 管理员角色创建
 // @Description 管理员角色创建
 // @Accept  json
 // @Produce  json
 // @Param body body request.AdminRoleForm true "管理员角色"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.AdminRole}
 // @Failure 500 {object} response.Response
 // @Router /admin_role/create [post]
 // @Security token
@@ -67,7 +67,7 @@ func (ct *AdminRole) Create(c *gin.Context) {
 	response.Success(c, item)
 }
 
-//List 列表
+// List 列表
 // @Tags 管理员角色
 // @Summary 管理员角色列表
 // @Description 管理员角色列表
@@ -75,7 +75,7 @@ func (ct *AdminRole) Create(c *gin.Context) {
 // @Produce  json
 // @Param page query int false "页码"
 // @Param page_size query int false "页大小"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.AdminRoleListRes}
 // @Failure 500 {object} response.Response
 // @Router /admin_role/list [get]
 // @Security token
@@ -90,14 +90,14 @@ func (ct *AdminRole) List(c *gin.Context) {
 	response.Success(c, res)
 }
 
-//Update 编辑
+// Update 编辑
 // @Tags 管理员角色
 // @Summary 管理员角色编辑
 // @Description 管理员角色编辑
 // @Accept  json
 // @Produce  json
 // @Param body body request.AdminRoleForm true "管理员信息"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.AdminRole}
 // @Failure 500 {object} response.Response
 // @Router /admin_role/update [post]
 // @Security token
@@ -129,7 +129,7 @@ func (ct *AdminRole) Update(c *gin.Context) {
 	response.Fail(c, 101, "信息不存在")
 }
 
-//Delete 删除
+// Delete 删除
 // @Tags 管理员角色
 // @Summary 管理员角色删除
 // @Description 管理员角色删除

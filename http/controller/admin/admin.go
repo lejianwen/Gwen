@@ -1,4 +1,4 @@
-package controller
+package admin
 
 import (
 	"Gwen/global"
@@ -15,14 +15,14 @@ import (
 type Admin struct {
 }
 
-//Detail 管理员
+// Detail 管理员
 // @Tags 管理员
 // @Summary 管理员详情
 // @Description 管理员详情
 // @Accept  json
 // @Produce  json
 // @Param id path int true "ID"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.Admin}
 // @Failure 500 {object} response.Response
 // @Router /admin/detail/{id} [get]
 // @Security token
@@ -39,14 +39,14 @@ func (ct *Admin) Detail(c *gin.Context) {
 	return
 }
 
-//Create 管理员
+// Create 管理员
 // @Tags 管理员
 // @Summary 创建管理员
 // @Description 创建管理员
 // @Accept  json
 // @Produce  json
 // @Param body body request.AdminForm true "管理员信息"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.Admin}
 // @Failure 500 {object} response.Response
 // @Router /admin/create [post]
 // @Security token
@@ -73,7 +73,7 @@ func (ct *Admin) Create(c *gin.Context) {
 	response.Success(c, admin)
 }
 
-//List 列表
+// List 列表
 // @Tags 管理员
 // @Summary 管理员列表
 // @Description 管理员列表
@@ -82,7 +82,7 @@ func (ct *Admin) Create(c *gin.Context) {
 // @Param page query int false "页码"
 // @Param page_size query int false "页大小"
 // @Param nickname query int false "昵称"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.AdminListRes}
 // @Failure 500 {object} response.Response
 // @Router /admin/list [get]
 // @Security token
@@ -101,14 +101,14 @@ func (ct *Admin) List(c *gin.Context) {
 	response.Success(c, res)
 }
 
-//Update 编辑
+// Update 编辑
 // @Tags 管理员
 // @Summary 管理员编辑
 // @Description 管理员编辑
 // @Accept  json
 // @Produce  json
 // @Param body body request.AdminForm true "管理员信息"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=model.Admin}
 // @Failure 500 {object} response.Response
 // @Router /admin/update [post]
 // @Security token
@@ -143,7 +143,7 @@ func (ct *Admin) Update(c *gin.Context) {
 	response.Fail(c, 101, "信息不存在")
 }
 
-//Delete 删除
+// Delete 删除
 // @Tags 管理员
 // @Summary 管理员删除
 // @Description 管理员编删除

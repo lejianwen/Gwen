@@ -6,8 +6,9 @@ import (
 )
 
 type Service struct {
-	AdminService
-	AdminRoleService
+	*AdminService
+	*AdminRoleService
+	*UserService
 }
 
 func New() *Service {

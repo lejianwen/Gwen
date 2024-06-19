@@ -32,9 +32,10 @@ func TestMemoryGet(t *testing.T) {
 
 func TestMemorySetExpGet(t *testing.T) {
 	mc := NewMemoryCache(0)
-	mc.Set("1", "4456711", 10)
-	mc.Set("2", "44567111", 5)
-	err := mc.Set("3", "44567", 3)
+	//mc.stopEviction()
+	mc.Set("1", "10", 10)
+	mc.Set("2", "5", 5)
+	err := mc.Set("3", "3", 3)
 	if err != nil {
 		t.Fatalf("写入失败")
 	}
@@ -44,24 +45,24 @@ func TestMemorySetExpGet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res 3", res)
 	time.Sleep(4 * time.Second)
 	//res = ""
 	err = mc.Get("3", &res)
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res 3", res)
 	err = mc.Get("2", &res)
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res 2", res)
 	err = mc.Get("1", &res)
 	if err != nil {
 		t.Fatalf("读取失败" + err.Error())
 	}
-	fmt.Println("res", res)
+	fmt.Println("res 1", res)
 
 }
 func TestMemoryLru(t *testing.T) {

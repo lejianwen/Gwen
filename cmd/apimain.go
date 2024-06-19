@@ -5,6 +5,7 @@ import (
 	"Gwen/global"
 	"Gwen/http"
 	"Gwen/lib/cache"
+	"Gwen/lib/jwt"
 	"Gwen/lib/lock"
 	"Gwen/lib/logger"
 	"Gwen/lib/orm"
@@ -18,12 +19,13 @@ import (
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 	"github.com/go-redis/redis/v8"
 	"reflect"
+	"time"
 )
 
-// @title 后台管理系统API
+// @title 管理系统API
 // @version 1.0
-// @description 后台接口
-// @basePath /admin-api
+// @description 接口
+// @basePath /api
 // @securityDefinitions.apikey token
 // @in header
 // @name api-token
@@ -68,21 +70,25 @@ func main() {
 	global.DB = orm.NewMysql(conf)
 
 	//validator
-	InitValidator()
+	ApiInitValidator()
 
 	//oss
 	global.Oss = &upload.Oss{}
 	utils.CopyStructByJson(&global.Config.Oss, global.Oss)
 
+	//jwt
+	//fmt.Println(global.Config.Jwt.PrivateKey)
+	global.Jwt = jwt.NewJwt(global.Config.Jwt.PrivateKey, global.Config.Jwt.ExpireDuration*time.Second)
+
 	//locker
 	global.Lock = lock.NewLocal()
 
 	//gin
-	http.Init()
+	http.ApiInit()
 
 }
 
-func InitValidator() {
+func ApiInitValidator() {
 	validate := validator.New()
 	enT := en.New()
 	cn := zh_Hans_CN.New()
@@ -105,7 +111,6 @@ func InitValidator() {
 
 	global.Validator.ValidStruct = func(i interface{}) []string {
 		err := global.Validator.Validate.Struct(i)
-		fmt.Println(err)
 		errList := make([]string, 0, 10)
 		if err != nil {
 			if _, ok := err.(*validator.InvalidValidationError); ok {

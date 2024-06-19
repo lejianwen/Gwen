@@ -1,70 +1,201 @@
 ## 该项目是自学go语言后，为加深理解实现的一个框架
 
+### 项目分为admin和api
+
+- admin是后台接口,在cmd/main.go中启动
+- api是接口系统,在cmd/apimain.go中启动
+
+### 项目使用的框架如下
+
+- gin
+- gorm
+- viper
+- swag
+- go-redis
+- validator
+- endless
+- jwt-go
+- logrus
+- ...
+
+### 自己实现了一些简单的功能
+
+- cache
+- lock
+- upload
+
+## 使用方式
+
+### 安装依赖
+
+```shell
+go mod tidy
+```
+
+### 直接运行
+
+```shell
+#api
+go run cmd/apimain.go 
+#或者指定配置文件
+go run cmd/apimain.go -c ./conf/config.yaml
+
+#admin
+go run cmd/main.go -c ./conf/config.yaml
+```
+
+## 使用generate运行
+
+### 1.先设置要编译到的环境
+
+```shell
+#linux
+go generate generate_env_linux.go
+
+#或者windows
+go generate generate_env_win.go
+```
+
+### 2.生成文档,然后编译或者直接运行
+
+```shell
+#运行api
+go generate generate_api.go
+
+#编译api
+go generate generate_build_api.go
+
+```
+
+### 3.部署
+
+#### 先上传***conf***目录, ***runtime***目录, ***resources***目录到正式环境
+
+#### 再上传生成好的***GwenApi***或者***GwenAdmin***,并给与运行权限```chmod +x GwenApi```
+
+```shell
+#到目录下
+./GwenApi
+#再不同的环境下，指定不同的配置文件即可，比如pro
+./GwenApi -c ./conf/config_pro.yaml
+```
+
 ### 使用的mod参见 go.mod
 
 ### 项目目录如下
 
 ~~~
 app
-├── conf                            配置文件
-│     └── config.yaml
-├── config                          配置相关结构体
-│     ├── config.go
-│     ├── gin.go
-│     ├── gorm.go
-│     ├── logger.go
-│     └── redis.go
-├── global                          全局变量
-│     └── global.go
-├── go.mod                  
+├── cmd
+│   ├── apimain.go
+│   └── main.go
+├── conf
+│   ├── config.yaml
+│   └── jwt_pri.pem   #jwt私钥，自己生成
+├── config
+│   ├── cache.go
+│   ├── config.go
+│   ├── gin.go
+│   ├── gorm.go
+│   ├── jwt.go
+│   ├── logger.go
+│   ├── oss.go
+│   └── redis.go
+├── docs
+│   ├── admin
+│   │   ├── admin_docs.go
+│   │   ├── admin_swagger.json
+│   │   └── admin_swagger.yaml
+│   └── api
+│       ├── api_docs.go
+│       ├── api_swagger.json
+│       └── api_swagger.yaml
+├── global
+│   └── global.go
+├── http
+│   ├── controller
+│   │   ├── admin
+│   │   │   ├── admin.go
+│   │   │   ├── admin_role.go
+│   │   │   ├── file.go
+│   │   │   └── login.go
+│   │   └── api
+│   │       ├── index.go
+│   │       └── user.go
+│   ├── middleware
+│   │   ├── admin.go
+│   │   ├── cors.go
+│   │   ├── jwt.go
+│   │   └── logger.go
+│   ├── request
+│   │   ├── admin.go
+│   │   ├── admin_role.go
+│   │   └── login.go
+│   ├── response
+│   │   ├── response.go
+│   │   └── user.go
+│   ├── router
+│   │   ├── admin.go
+│   │   ├── api.go
+│   │   └── router.go
+│   ├── http.go
+│   ├── run.go
+│   └── run_win.go
+├── lib
+│   ├── cache
+│   │   ├── cache.go
+│   │   ├── cache_test.go
+│   │   ├── file.go
+│   │   ├── file_test.go
+│   │   ├── memory.go
+│   │   ├── memory_test.go
+│   │   ├── redis.go
+│   │   ├── redis_test.go
+│   │   ├── simple_cache.go
+│   │   └── simple_cache_test.go
+│   ├── jwt
+│   │   ├── jwt.go
+│   │   └── jwt_test.go
+│   ├── lock
+│   │   ├── local.go
+│   │   ├── local_test.go
+│   │   └── lock.go
+│   ├── logger
+│   │   └── logger.go
+│   ├── orm
+│   │   └── mysql.go
+│   └── upload
+│       ├── local.go
+│       └── oss.go
+├── model
+│   ├── custom_types
+│   │   ├── auto_json.go
+│   │   └── auto_time.go
+│   ├── admin.go
+│   ├── adminRole.go
+│   ├── model.go
+│   └── user.go
+├── resources
+│   └── public
+│       └── upload
+├── runtime
+│   ├── cache
+│   └── log.txt
+├── service
+│   ├── admin.go
+│   ├── admin_role.go
+│   ├── service.go
+│   └── user.go
+├── utils
+│   └── tools.go
+├── generate_admin.go
+├── generate_api.go
+├── generate_build_api.go
+├── generate_env_linux.go
+├── generate_env_win.go
+├── go.mod
 ├── go.sum
-├── http                            http相关
-│     ├── controller                控制器,下面每个子目录对应一个模块
-│     │     ├── admin               admin控制器
-│     │     │     ├── admin.go
-│     │     │     └── login.go
-│     │     └── response.go
-│     ├── http.go
-│     ├── middleware
-│     │     ├── admin.go
-│     │     └── logger.go
-│     ├── router                    路由,下面每个子目录对应一个模块
-│     │     ├── admin               admin路由，下面每个路由文件对应一个controller
-│     │     │     ├── admin.go
-│     │     │     └── login.go
-│     │     ├── admin.go            admin路由注册
-│     │     ├── api.go              api路由注册
-│     │     └── router.go
-│     ├── run.go                    server启动,非win系统下
-│     └── run_win.go                server启动,win系统下
-├── lib                             核心包
-│     ├── cache                     缓存
-│     │     ├── cache.go
-│     │     ├── cache_test.go
-│     │     ├── file.go
-│     │     ├── file_lock.go
-│     │     ├── file_lock_win.go
-│     │     ├── file_test.go
-│     │     ├── redis.go
-│     │     └── redis_test.go
-│     ├── logger                    日志
-│     │     └── logger.go
-│     └── redis                     redis
-│         ├── redis.go
-│         └── redis_test.go
-├── main.go
-├── model                           gorm模型
-│     ├── admin.go
-│     ├── adminRole.go
-│     └── model.go                  gorm初始化
-├── runtime                         运行日志，缓存目录
-│     └── log.txt
-├── service                         service层，dao操作放到service中，不单独再写dao层
-│     ├── admin.go
-│     └── service.go
-└── utils                           其他工具
-    └── response.go
-
+└── README.md
 
 ~~~
 

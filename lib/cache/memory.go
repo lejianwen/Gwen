@@ -13,6 +13,7 @@ type MemoryCache struct {
 	data      map[string]*CacheItem
 	ll        *list.List    // 用于实现LRU
 	pq        PriorityQueue // 用于实现TTL
+	quit      chan struct{}
 	mu        sync.Mutex
 	maxBytes  int64
 	usedBytes int64
@@ -160,10 +161,24 @@ func (m *MemoryCache) evictExpiredItems() {
 
 // startEviction starts a goroutine that evicts expired items from the cache.
 func (m *MemoryCache) startEviction() {
-	for {
-		time.Sleep(1 * time.Second)
-		m.evictExpiredItems()
-	}
+	ticker := time.NewTicker(1 * time.Second)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				m.evictExpiredItems()
+			case <-m.quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+}
+
+// stopEviction 停止定时清理
+func (m *MemoryCache) stopEviction() {
+	close(m.quit)
 }
 
 // deleteItem removes a key from the cache.
@@ -190,10 +205,11 @@ func NewMemoryCache(maxBytes int64) *MemoryCache {
 	cache := &MemoryCache{
 		data:     make(map[string]*CacheItem),
 		pq:       make(PriorityQueue, 0),
+		quit:     make(chan struct{}),
 		ll:       list.New(),
 		maxBytes: maxBytes,
 	}
 	heap.Init(&cache.pq)
-	go cache.startEviction()
+	cache.startEviction()
 	return cache
 }

@@ -3,6 +3,8 @@ package global
 import (
 	"Gwen/config"
 	"Gwen/lib/cache"
+	"Gwen/lib/jwt"
+	"Gwen/lib/lock"
 	"Gwen/lib/upload"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -25,5 +27,7 @@ var (
 		ValidStruct func(interface{}) []string
 		ValidVar    func(field interface{}, tag string) []string
 	}
-	Oss *upload.Oss
+	Oss  *upload.Oss
+	Jwt  *jwt.Jwt
+	Lock lock.Locker
 )

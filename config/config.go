@@ -20,6 +20,7 @@ type Config struct {
 	Redis  Redis
 	Cache  Cache
 	Oss    Oss
+	Jwt    Jwt
 }
 
 // Init 初始化配置
